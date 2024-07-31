@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import MyModel, SubscriptionPlan, UserSubscription
+from .models import MyModel, SubscriptionPlan, UserSubscription, MeetingEvent
 from datetime import date, timedelta
 
 class MyModelSerializer(serializers.ModelSerializer):
@@ -33,3 +33,8 @@ class UserSubscriptionSerializer(serializers.ModelSerializer):
         if 'start_date' in validated_data:
             validated_data['end_date'] = start_date + timedelta(days=plan.duration)
         return super().update(instance, validated_data)
+    
+class MeetingEventSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MeetingEvent
+        fields = '__all__'

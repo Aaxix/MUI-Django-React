@@ -47,6 +47,7 @@ import Notifications from "layouts/notifications";
 import Profile from "layouts/profile";
 import SignIn from "layouts/authentication/sign-in";
 import SignUp from "layouts/authentication/sign-up";
+import CreateMeeting from "layouts/create meeting";
 
 // @mui icons
 import Icon from "@mui/material/Icon";
@@ -91,6 +92,11 @@ const routes = [
     icon: <Icon fontSize="small">assignment</Icon>,
     route: "/subcribers",
     component: <Subscribers />,
+  },
+  // create meeting on button is in \examples\Sidenav\index.js but need to add route here
+  {
+    route: "/create-meeting",
+    component: <CreateMeeting />,
   },
   {
     type: "collapse",

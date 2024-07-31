@@ -23,6 +23,7 @@ router=routers.DefaultRouter()
 router.register(r'employee',views.MyModelViewSet,'employee')
 router.register(r'subscriptions', views.SubscriptionPlanViewSet, 'subscriptions')
 router.register(r'user-subscriptions', views.UserSubscriptionViewSet, 'user-subscriptions')
+router.register(r'meeting-events', views.MeetingEventViewSet, 'meeting-events')
 
 
 urlpatterns = [

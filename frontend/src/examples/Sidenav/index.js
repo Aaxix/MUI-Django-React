@@ -181,15 +181,15 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
       <List>{renderRoutes}</List>
       <MDBox p={2} mt="auto">
         <MDButton
-          component="a"
-          href="https://www.creative-tim.com/product/material-dashboard-pro-react"
-          target="_blank"
-          rel="noreferrer"
+          // component="a" for using the button as a link
+          href="/create-meeting" // href for the link but routes in the routes.js
+          // target="_blank" for opening the link in a new tab
+          // rel="noreferrer" for security reasons
           variant="gradient"
           color={sidenavColor}
           fullWidth
         >
-          upgrade to pro
+          Create Meeting
         </MDButton>
       </MDBox>
     </SidenavRoot>

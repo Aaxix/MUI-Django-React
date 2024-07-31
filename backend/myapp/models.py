@@ -38,3 +38,14 @@ class UserSubscription(models.Model):
 
     def __str__(self):
         return f"{self.user.name} - {self.plan.name}"
+
+class MeetingEvent(models.Model):
+    eventName = models.CharField(max_length=255)
+    duration = models.IntegerField()
+    locationType = models.CharField(max_length=255)
+    locationUrl = models.URLField(max_length=200)
+    themeColor = models.CharField(max_length=7)
+    createdBy = models.EmailField()
+
+    def __str__(self):
+        return self.eventName
