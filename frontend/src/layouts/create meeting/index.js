@@ -17,6 +17,7 @@ function CreateMeeting() {
       <DashboardNavbar />
       <MDBox pt={6} pb={3}>
         <Grid container spacing={4}>
+          {/* Meeting Form Section */}
           <Grid item xs={12} md={4}>
             <Card>
               <MDBox
@@ -38,6 +39,8 @@ function CreateMeeting() {
               </MDBox>
             </Card>
           </Grid>
+
+          {/* Preview Section */}
           <Grid item xs={12} md={8}>
             <Card>
               <MDBox

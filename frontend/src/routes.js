@@ -44,9 +44,9 @@ import Subscribers from "layouts/subscribers";
 import Billing from "layouts/billing";
 import RTL from "layouts/rtl";
 import Notifications from "layouts/notifications";
-import Profile from "layouts/profile";
+import SharedMeeting from "layouts/share meeting";
 import SignIn from "layouts/authentication/sign-in";
-import SignUp from "layouts/authentication/sign-up";
+import MeetingType from "layouts/meeting list/MeetingType";
 import CreateMeeting from "layouts/create meeting";
 
 // @mui icons
@@ -124,11 +124,11 @@ const routes = [
   },
   {
     type: "collapse",
-    name: "Profile",
-    key: "profile",
+    name: "Shared Meeting",
+    key: "Share",
     icon: <Icon fontSize="small">person</Icon>,
-    route: "/profile",
-    component: <Profile />,
+    route: "/shared-meeting",
+    component: <SharedMeeting />,
   },
   {
     type: "collapse",
@@ -140,11 +140,11 @@ const routes = [
   },
   {
     type: "collapse",
-    name: "Sign Up",
-    key: "sign-up",
+    name: "Meeting List",
+    key: "MeetingType",
     icon: <Icon fontSize="small">assignment</Icon>,
-    route: "/authentication/sign-up",
-    component: <SignUp />,
+    route: "/MeetingType",
+    component: <MeetingType />,
   },
 ];
 

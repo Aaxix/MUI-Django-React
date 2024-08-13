@@ -44,8 +44,24 @@ class MeetingEvent(models.Model):
     duration = models.IntegerField()
     locationType = models.CharField(max_length=255)
     locationUrl = models.URLField(max_length=200)
-    themeColor = models.CharField(max_length=7)
-    createdBy = models.EmailField()
 
     def __str__(self):
         return self.eventName
+    
+class Business(models.Model):
+    businessName = models.CharField(max_length=255)
+    email = models.EmailField()
+    # Other relevant fields
+
+class ScheduledMeeting(models.Model):
+    businessName = models.CharField(max_length=255)
+    businessEmail = models.EmailField()
+    selectedTime = models.CharField(max_length=255)
+    selectedDate = models.DateField()
+    duration = models.IntegerField()
+    locationUrl = models.URLField()
+    eventId = models.ForeignKey(MeetingEvent, on_delete=models.CASCADE)
+    userName = models.CharField(max_length=255)
+    userEmail = models.EmailField()
+    userNote = models.TextField()
+    id = models.CharField(primary_key=True, max_length=255)

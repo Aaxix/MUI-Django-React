@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import MyModel, SubscriptionPlan, UserSubscription, MeetingEvent
+from .models import MyModel, SubscriptionPlan, UserSubscription, MeetingEvent, Business, ScheduledMeeting
 from datetime import date, timedelta
 
 class MyModelSerializer(serializers.ModelSerializer):
@@ -37,4 +37,14 @@ class UserSubscriptionSerializer(serializers.ModelSerializer):
 class MeetingEventSerializer(serializers.ModelSerializer):
     class Meta:
         model = MeetingEvent
+        fields = '__all__'
+
+class BusinessSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Business
+        fields = '__all__'
+
+class ScheduledMeetingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ScheduledMeeting
         fields = '__all__'

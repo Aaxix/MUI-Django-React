@@ -19,6 +19,8 @@ function MeetingForm({ setFormValue }) {
   const [duration, setDuration] = useState(30);
   const [locationUrl, setLocationUrl] = useState("");
   const [selectedLocation, setSelectedLocation] = useState(null);
+  const [createdBy] = useState("user@example.com"); // Replace with actual user email
+  const [urlError, setUrlError] = useState(""); // State to handle URL validation error
 
   useEffect(() => {
     setFormValue({
@@ -26,23 +28,45 @@ function MeetingForm({ setFormValue }) {
       duration,
       locationType: selectedLocation,
       locationUrl,
+      createdBy,
     });
-  }, [eventName, duration, selectedLocation, locationUrl, setFormValue]);
+  }, [eventName, duration, selectedLocation, locationUrl, createdBy, setFormValue]);
 
-  const handleCreateClick = async () => {
+  const validateUrl = (url) => {
+    const urlPattern = /^(https?:\/\/)/;
+    if (!urlPattern.test(url)) {
+      setUrlError("Invalid URL. It must start with http:// or https://");
+      return false;
+    } else {
+      setUrlError("");
+      return true;
+    }
+  };
+
+  const handleCreateClick = () => {
+    if (!validateUrl(locationUrl)) {
+      return;
+    }
+
     const newEvent = {
       eventName,
       duration,
       locationType: selectedLocation,
       locationUrl,
+      createdBy,
     };
 
-    try {
-      await axios.post("http://localhost:8000/api/create-event", newEvent);
-      alert("New Meeting Event Created!");
-    } catch (err) {
-      console.error(err);
-    }
+    console.log("Sending data:", newEvent); // Log data being sent
+
+    axios
+      .post("http://localhost:8000/api/meeting-events/", newEvent)
+      .then(() => {
+        alert("New Meeting Event Created!");
+      })
+      .catch((err) => {
+        console.error("Error creating meeting event:", err);
+        alert("Error creating meeting event.");
+      });
   };
 
   return (
@@ -57,11 +81,7 @@ function MeetingForm({ setFormValue }) {
       />
       <FormControl fullWidth margin="normal">
         <InputLabel>Duration</InputLabel>
-        <Select
-          value={duration}
-          sx={{ padding: "15px" }}
-          onChange={(e) => setDuration(e.target.value)}
-        >
+        <Select value={duration} onChange={(e) => setDuration(e.target.value)}>
           <MenuItem value={15}>15 Min</MenuItem>
           <MenuItem value={30}>30 Min</MenuItem>
           <MenuItem value={45}>45 Min</MenuItem>
@@ -111,17 +131,22 @@ function MeetingForm({ setFormValue }) {
         fullWidth
         margin="normal"
         value={locationUrl}
-        onChange={(e) => setLocationUrl(e.target.value)}
+        onChange={(e) => {
+          setLocationUrl(e.target.value);
+          validateUrl(e.target.value);
+        }}
+        error={!!urlError}
+        helperText={urlError}
       />
       <Button
         variant="contained"
         color="primary"
         fullWidth
         onClick={handleCreateClick}
+        disabled={!eventName || !duration || !selectedLocation || !locationUrl || !!urlError}
         sx={{
           color: "#ffffff",
         }}
-        disabled={!eventName || !duration || !selectedLocation || !locationUrl}
       >
         Create
       </Button>

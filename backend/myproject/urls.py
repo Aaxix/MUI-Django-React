@@ -24,6 +24,8 @@ router.register(r'employee',views.MyModelViewSet,'employee')
 router.register(r'subscriptions', views.SubscriptionPlanViewSet, 'subscriptions')
 router.register(r'user-subscriptions', views.UserSubscriptionViewSet, 'user-subscriptions')
 router.register(r'meeting-events', views.MeetingEventViewSet, 'meeting-events')
+router.register(r'businessName', views.BusinessDetailViewSet, 'business-detail')
+router.register(r'schedule-meeting', views.ScheduleMeetingViewSet, 'schedule-meeting')
 
 
 urlpatterns = [
