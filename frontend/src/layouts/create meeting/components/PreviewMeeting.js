@@ -4,16 +4,18 @@ import { Card, CardContent, Typography, Grid, Button } from "@mui/material";
 import { CalendarPicker } from "@mui/x-date-pickers/CalendarPicker";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { format, startOfDay, addMinutes } from "date-fns";
+import { format, startOfDay, addMinutes, addDays, isWithinInterval, parseISO } from "date-fns"; // Added parseISO import
 
-const timeSlots = (duration) => {
+const timeSlots = (duration, startDate, endDate) => {
   const slots = [];
   const startTime = startOfDay(new Date()).setHours(8, 0, 0, 0);
   const endTime = startOfDay(new Date()).setHours(18, 0, 0, 0);
 
   let currentTime = startTime;
   while (currentTime <= endTime) {
-    slots.push(format(currentTime, "h:mm a"));
+    if (isWithinInterval(currentTime, { start: startDate, end: endDate })) {
+      slots.push(format(currentTime, "h:mm a"));
+    }
     currentTime = addMinutes(currentTime, duration);
   }
 
@@ -24,14 +26,24 @@ function PreviewMeeting({ formValue }) {
   const [selectedDate, setSelectedDate] = React.useState(new Date());
   const [selectedTime, setSelectedTime] = React.useState(null);
 
-  const slots = timeSlots(formValue.duration || 30);
+  // Ensure startDate and endDate are properly initialized
+  const startDate = formValue.startDate ? parseISO(formValue.startDate) : new Date();
+  const endDate = formValue.endDate ? parseISO(formValue.endDate) : addDays(startDate, 1); // Default endDate to 1 day after startDate
+
+  // Format dates for display
+  const formatDate = (date) => {
+    const parsedDate = new Date(date);
+    return !isNaN(parsedDate) ? format(parsedDate, "dd/MM/yyyy") : "Invalid Date";
+  };
+
+  const slots = timeSlots(formValue.duration || 30, startDate, endDate);
 
   const handleTimeClick = (time) => {
     setSelectedTime(time);
   };
 
   return (
-    <Grid container spacing={2} style={{ margin: "16px" }}>
+    <Grid container spacing={2}>
       <Grid item xs={4}>
         <Card>
           <CardContent>
@@ -41,7 +53,7 @@ function PreviewMeeting({ formValue }) {
             <Typography variant="body2" color="textSecondary" gutterBottom>
               Duration: {formValue.duration ? `${formValue.duration} Min` : "No Duration"}
             </Typography>
-            <Typography variant="body2" color="textSecondary">
+            <Typography variant="body2" color="textSecondary" gutterBottom>
               Location: {formValue.locationType || "No Location Type"}
             </Typography>
             {formValue.locationUrl && (
@@ -49,6 +61,12 @@ function PreviewMeeting({ formValue }) {
                 Location URL: <a href={formValue.locationUrl}>{formValue.locationUrl}</a>
               </Typography>
             )}
+            <Typography variant="body2" color="textSecondary" gutterBottom>
+              Start Date: {formatDate(formValue.startDate) || "No Start Date"}
+            </Typography>
+            <Typography variant="body2" color="textSecondary" gutterBottom>
+              End Date: {formatDate(formValue.endDate) || "No End Date"}
+            </Typography>
           </CardContent>
         </Card>
       </Grid>
@@ -71,7 +89,8 @@ function PreviewMeeting({ formValue }) {
                 <CalendarPicker
                   date={selectedDate}
                   onChange={(newDate) => setSelectedDate(newDate)}
-                  minDate={startOfDay(new Date())}
+                  minDate={startDate}
+                  maxDate={endDate}
                   disableHighlightToday
                   sx={{
                     "& .MuiPickersCalendarHeader-label": {
@@ -138,6 +157,8 @@ PreviewMeeting.propTypes = {
     duration: PropTypes.number,
     locationType: PropTypes.string,
     locationUrl: PropTypes.string,
+    startDate: PropTypes.string,
+    endDate: PropTypes.string,
   }).isRequired,
 };
 

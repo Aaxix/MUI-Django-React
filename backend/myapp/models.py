@@ -39,14 +39,29 @@ class UserSubscription(models.Model):
     def __str__(self):
         return f"{self.user.name} - {self.plan.name}"
 
+from django.db import models
+from django.core.exceptions import ValidationError
+
 class MeetingEvent(models.Model):
     eventName = models.CharField(max_length=255)
     duration = models.IntegerField()
     locationType = models.CharField(max_length=255)
     locationUrl = models.URLField(max_length=200)
+    startDate = models.DateField(default=date.today())
+    endDate = models.DateField(default=date.today())
 
     def __str__(self):
         return self.eventName
+
+    def clean(self):
+        # Ensure endDate is not before startDate
+        if self.endDate < self.startDate:
+            raise ValidationError("End date cannot be before start date.")
+
+    def save(self, *args, **kwargs):
+        # Call clean method before saving
+        self.clean()
+        super().save(*args, **kwargs)
     
 class Business(models.Model):
     businessName = models.CharField(max_length=255)

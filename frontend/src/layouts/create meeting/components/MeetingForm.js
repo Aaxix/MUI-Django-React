@@ -10,6 +10,8 @@ import {
   Card,
   CardContent,
   Typography,
+  Grid,
+  CircularProgress,
 } from "@mui/material";
 import axios from "axios";
 import locationOptions from "./LocationOptions"; // Ensure the path is correct
@@ -19,8 +21,10 @@ function MeetingForm({ setFormValue }) {
   const [duration, setDuration] = useState(30);
   const [locationUrl, setLocationUrl] = useState("");
   const [selectedLocation, setSelectedLocation] = useState(null);
-  const [createdBy] = useState("user@example.com"); // Replace with actual user email
   const [urlError, setUrlError] = useState(""); // State to handle URL validation error
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [loading, setLoading] = useState(false); // State to handle loading indicator
 
   useEffect(() => {
     setFormValue({
@@ -28,9 +32,10 @@ function MeetingForm({ setFormValue }) {
       duration,
       locationType: selectedLocation,
       locationUrl,
-      createdBy,
+      startDate,
+      endDate,
     });
-  }, [eventName, duration, selectedLocation, locationUrl, createdBy, setFormValue]);
+  }, [eventName, duration, selectedLocation, locationUrl, startDate, endDate, setFormValue]);
 
   const validateUrl = (url) => {
     const urlPattern = /^(https?:\/\/)/;
@@ -53,24 +58,38 @@ function MeetingForm({ setFormValue }) {
       duration,
       locationType: selectedLocation,
       locationUrl,
-      createdBy,
+      startDate,
+      endDate,
     };
 
-    console.log("Sending data:", newEvent); // Log data being sent
+    setLoading(true); // Start loading state
 
     axios
       .post("http://localhost:8000/api/meeting-events/", newEvent)
       .then(() => {
         alert("New Meeting Event Created!");
+        // Reset form fields
+        setEventName("");
+        setDuration(30);
+        setLocationUrl("");
+        setSelectedLocation(null);
+        setStartDate("");
+        setEndDate("");
       })
       .catch((err) => {
         console.error("Error creating meeting event:", err);
         alert("Error creating meeting event.");
+      })
+      .finally(() => {
+        setLoading(false); // End loading state
       });
   };
 
+  // Get current date in YYYY-MM-DD format
+  const todayDate = new Date().toISOString().split("T")[0];
+
   return (
-    <div style={{ padding: "8px" }}>
+    <div style={{ padding: "16px", maxWidth: "600px", margin: "auto" }}>
       <TextField
         label="Event Name"
         variant="outlined"
@@ -81,19 +100,32 @@ function MeetingForm({ setFormValue }) {
       />
       <FormControl fullWidth margin="normal">
         <InputLabel>Duration</InputLabel>
-        <Select value={duration} onChange={(e) => setDuration(e.target.value)}>
-          <MenuItem value={15}>15 Min</MenuItem>
-          <MenuItem value={30}>30 Min</MenuItem>
-          <MenuItem value={45}>45 Min</MenuItem>
-          <MenuItem value={60}>60 Min</MenuItem>
+        <Select
+          label="Duration"
+          value={duration}
+          sx={{ padding: "8px" }}
+          onChange={(e) => setDuration(e.target.value)}
+        >
+          <MenuItem sx={{ padding: "5px" }} value={15}>
+            15 Min
+          </MenuItem>
+          <MenuItem sx={{ padding: "5px" }} value={30}>
+            30 Min
+          </MenuItem>
+          <MenuItem sx={{ padding: "5px" }} value={45}>
+            45 Min
+          </MenuItem>
+          <MenuItem sx={{ padding: "5px" }} value={60}>
+            60 Min
+          </MenuItem>
         </Select>
       </FormControl>
       <div
         style={{
           display: "flex",
-          whiteSpace: "nowrap",
-          gap: "8px", // Uniform gap between cards
-          padding: "0px 0px", // Space above and below the row
+          flexWrap: "wrap",
+          gap: "8px",
+          padding: "8px 0",
         }}
       >
         {locationOptions.map((option) => (
@@ -101,17 +133,17 @@ function MeetingForm({ setFormValue }) {
             key={option.name}
             onClick={() => setSelectedLocation(option.name)}
             style={{
-              flex: "0 0 auto", // Prevents shrinking and wrapping
-              width: "105px", // Adjust width to your preference
-              height: "85px", // Adjust height to your preference
+              flex: "0 0 auto",
+              width: "102px",
+              height: "85px",
               cursor: "pointer",
               border: `2px solid ${selectedLocation === option.name ? "#3f51b5" : "#ccc"}`,
               transition: "border-color 0.3s",
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
-              padding: "5px", // Add padding inside the card
-              boxSizing: "border-box", // Includes padding and border in the element's total width and height
+              padding: "5px",
+              boxSizing: "border-box",
             }}
           >
             <img
@@ -138,17 +170,56 @@ function MeetingForm({ setFormValue }) {
         error={!!urlError}
         helperText={urlError}
       />
+      <Grid container spacing={2}>
+        <Grid item xs={6}>
+          <TextField
+            label="Start Date"
+            type="date"
+            variant="outlined"
+            fullWidth
+            margin="normal"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+            InputLabelProps={{
+              shrink: true,
+            }}
+            inputProps={{
+              min: todayDate,
+            }}
+          />
+        </Grid>
+        <Grid item xs={6}>
+          <TextField
+            label="End Date"
+            type="date"
+            variant="outlined"
+            fullWidth
+            margin="normal"
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
+            InputLabelProps={{
+              shrink: true,
+            }}
+            inputProps={{
+              min: startDate ? startDate : todayDate,
+            }}
+          />
+        </Grid>
+      </Grid>
       <Button
         variant="contained"
         color="primary"
         fullWidth
         onClick={handleCreateClick}
-        disabled={!eventName || !duration || !selectedLocation || !locationUrl || !!urlError}
+        disabled={
+          !eventName || !duration || !selectedLocation || !locationUrl || !!urlError || loading
+        }
         sx={{
           color: "#ffffff",
+          mt: 2,
         }}
       >
-        Create
+        {loading ? <CircularProgress size={24} color="inherit" /> : "Create"}
       </Button>
     </div>
   );

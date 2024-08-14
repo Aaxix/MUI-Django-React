@@ -125,7 +125,20 @@ function MeetingEventList({ searchQuery }) {
                   <Room /> {event.locationType}
                 </Typography>
               </div>
-              <Divider style={{ margin: "20px 0" }} />
+              <Divider style={{ margin: "8px 0" }} />
+              <Typography variant="body2" color="textSecondary">
+                Start Date: {new Date(event.startDate).toLocaleDateString()}
+              </Typography>
+              <Typography variant="body2" color="textSecondary" gutterBottom>
+                End Date: {new Date(event.endDate).toLocaleDateString()}
+              </Typography>
+              <Divider
+                style={{
+                  margin: "8px 0",
+                  borderBottomWidth: "1px", // Adjust the thickness
+                  borderColor: "grey.10", // Change color to a lighter shade
+                }}
+              />
               <div
                 style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}
               >
